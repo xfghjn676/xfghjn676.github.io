@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小土豆杀毒 - 下载</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: #f3f7ef;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  /* ===== 顶部绿条 ===== */
+  header {
+    background: linear-gradient(135deg, #3f9e4d, #2e8b57);
+    color: #fff;
+    padding: 48px 24px 56px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 40px;
+    background: #f3f7ef;
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  }
+  .logo {
+    width: 96px; height: 96px;
+    margin: 0 auto 18px;
+    background: #d9a441;
+    border: 4px solid #8a6520;
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 6px 20px rgba(0,0,0,.18);
+  }
+  .logo::before, .logo::after {
+    content: "";
+    position: absolute;
+    top: 30%; width: 13%; height: 16%;
+    background: #4a3000;
+    border-radius: 50%;
+  }
+  .logo::before { left: 28%; }
+  .logo::after  { left: 59%; }
+  .logo-mouth {
+    position: absolute;
+    left: 26%; top: 52%;
+    width: 48%; height: 26%;
+    border-bottom: 3px solid #4a3000;
+    border-radius: 0 0 60% 60%;
+  }
+  h1 {
+    font-size: 34px;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 2;
+  }
+  .subtitle {
+    font-size: 14px;
+    opacity: .9;
+    position: relative;
+    z-index: 2;
+  }
+  /* ===== 主体 ===== */
+  main {
+    flex: 1;
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 8px 24px 60px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 4px 18px rgba(63,158,77,.10);
+    margin-bottom: 20px;
+  }
+  .download-btn {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(135deg, #43a047, #2e7d32);
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    letter-spacing: 2px;
+    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 5px 16px rgba(46,125,50,.30);
+  }
+  .download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(46,125,50,.38);
+  }
+  .download-btn:active { transform: translateY(0); }
+  .file-info {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+    font-size: 12px;
+    color: #999;
+  }
+  .file-info code {
+    font-family: Consolas, monospace;
+    background: #f5f5f5;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #666;
+  }
+  h2 {
+    font-size: 17px;
+    color: #2e7d32;
+    margin-bottom: 14px;
+    padding-left: 11px;
+    border-left: 4px solid #43a047;
+  }
+  ol, ul { padding-left: 22px; }
+  li { line-height: 2; font-size: 14px; color: #555; }
+  li strong { color: #2e7d32; }
+  .tip {
+    background: #fffbe6;
+    border-left: 4px solid #f0c040;
+    padding: 14px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.9;
+    color: #7a5c00;
+    margin-top: 14px;
+  }
+  .tip b { color: #b8860b; }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  .feature {
+    background: #f1f8e9;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .feature .icon { font-size: 24px; display: block; margin-bottom: 8px; }
+  .feature .name { font-size: 13px; color: #33691e; font-weight: bold; }
+  footer {
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+    color: #aaa;
+  }
+  footer a { color: #888; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><div class="logo-mouth"></div></div>
+  <h1>小土豆杀毒</h1>
+  <p class="subtitle">好用的杀毒软件 · 轻量 · 免费 · 开源思路</p>
+</header>
+
+<main>
+
+  <!-- ===== 下载按钮 ===== -->
+  <div class="card">
+    <a class="download-btn" href="小土豆杀毒压缩包.zip" download>⬇ 下载小土豆杀毒</a>
+    <div class="file-info">
+      <span>文件名：<code>小土豆杀毒压缩包.zip</code></span>
+      <span>大小：约 36.7 MB</span>
+    </div>
+    <div class="tip">
+      <b>⚠️ 下载前必读</b><br>
+      这是一个<b>个人练习项目</b>，用 Python + Tkinter 写的。它没有正规厂商的代码签名证书，
+      所以 Windows 可能会有安全提示，属于正常现象。
+    </div>
+  </div>
+
+  <!-- ===== 使用步骤 ===== -->
+  <div class="card">
+    <h2>怎么用</h2>
+    <ol>
+      <li>点上面的绿色按钮，把 <code>小土豆杀毒压缩包.zip</code> 下载下来</li>
+      <li><strong>好消息：这是 .zip 格式，Windows 自带就能解压</strong> —— 右键点它 → 「全部解压缩」就行，<strong>不用装 7-Zip</strong></li>
+      <li>解压后会看到 <code>小土豆杀毒压缩包</code> 文件夹，里面有 <strong>小土豆杀毒.exe</strong>，还有 <code>小组件</code>（下载器和游戏）、<code>图片</code>、<code>Necessary documents</code></li>
+      <li>双击 exe 启动。如果双击没反应，就双击包里的 <strong>「打不开的时候用！.bat」</strong></li>
+    </ol>
+    <div class="tip">
+      <b>💡 那个 .bat 是干嘛的？</b><br>
+      它会自动找同目录下的 exe。所以你把整个文件夹搬到哪都能用，
+      不会出现"移动位置后打不开"的情况。
+    </div>
+  </div>
+
+  <!-- ===== 功能 ===== -->
+  <div class="card">
+    <h2>它能做什么</h2>
+    <div class="feature-grid">
+      <div class="feature">
+        <span class="icon">🛡️</span>
+        <span class="name">三层检测</span>
+      </div>
+      <div class="feature">
+        <span class="icon">⏸️</span>
+        <span class="name">暂停可疑进程</span>
+      </div>
+      <div class="feature">
+        <span class="icon">🔍</span>
+        <span class="name">SHA-256 病毒库</span>
+      </div>
+      <div class="feature">
+        <span class="icon">📁</span>
+        <span class="name">文档批量改写监测</span>
+      </div>
+      <div class="feature">
+        <span class="icon">⌨️</span>
+        <span class="name">全局热键呼出</span>
+      </div>
+      <div class="feature">
+        <span class="icon">🚀</span>
+        <span class="name">开机自启</span>
+      </div>
+    </div>
+    <div class="tip" style="margin-top:18px">
+      热键：<b>Ctrl+Alt+S</b> 呼出窗口　·　<b>Ctrl+Alt+Q</b> 彻底退出<br>
+      点窗口右上角 × 只是缩到后台继续守着，不是退出。
+    </div>
+  </div>
+
+  <!-- ===== 常见问题 ===== -->
+  <div class="card">
+    <h2>遇到拦住了怎么办</h2>
+    <ul>
+      <li><strong>双击没反应 / 文件不见了</strong> —— 被杀软或 Windows 智能应用控制拦了。打开杀软的隔离区，恢复并加白名单。</li>
+      <li><strong>弹"无法验证发布者"</strong> —— 这个程序没有签名证书，正常的。点"更多信息 → 仍要运行"（如果按钮是灰的，那是智能应用控制，只能关掉它）。</li>
+      <li><strong>弹 UAC"是否允许更改"</strong> —— 点"是"，程序需要权限才能监控进程。</li>
+      <li><strong>第一次启动很慢</strong> —— 单文件 exe 要先解压自己到临时目录，等 1~3 秒正常。</li>
+    </ul>
+    <div class="tip">
+      <b>🔐 安全提示</b><br>
+      本程序只在你自己的电脑上运行，不会联网上传任何数据。
+      版权为kkif所有，不公开源码。
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  小土豆杀毒 · 好用 · 安全
+</footer>
+
+</body>
+</html>
