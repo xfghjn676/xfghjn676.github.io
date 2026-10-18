@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FanOS 模拟器下载器</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --lan: #0078d7;
+    --lan-shen: #005a9e;
+    --lan-qian: #e8f3fc;
+    --zi: #1a1a1a;
+    --hui: #6b6b6b;
+    --qian-hui: #9a9a9a;
+    --bian: #e4e8ec;
+    --di: #fafbfc;
+  }
+
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", -apple-system,
+                 "Segoe UI", sans-serif;
+    color: var(--zi);
+    background: var(--di);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ================= 顶部 ================= */
+  .ding {
+    background: var(--lan);
+    color: #fff;
+    padding: 56px 24px 64px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .ding::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 6px;
+    background: linear-gradient(90deg,
+      #0078d7, #00bcf2, #7fba00, #ffb900, #e81123);
+    opacity: .85;
+  }
+  .ding h1 {
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .ding h1 span { font-weight: 300; opacity: .92; }
+  .ding .fu {
+    font-size: 15px;
+    color: #cde5fb;
+    font-weight: 300;
+  }
+  .ban-ben {
+    display: inline-block;
+    margin-top: 18px;
+    font-size: 12px;
+    background: rgba(255,255,255,.16);
+    border: 1px solid rgba(255,255,255,.28);
+    border-radius: 20px;
+    padding: 3px 14px;
+    letter-spacing: .5px;
+  }
+
+  /* ================= 主体 ================= */
+  .zhu {
+    max-width: 860px;
+    margin: -34px auto 0;
+    padding: 0 20px 80px;
+    position: relative;
+  }
+
+  .ka {
+    background: #fff;
+    border: 1px solid var(--bian);
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(16, 42, 67, .07);
+    padding: 34px 30px;
+    margin-bottom: 22px;
+  }
+
+  /* ---- 下载卡 ---- */
+  .ka-xia { text-align: center; padding: 38px 30px 30px; }
+
+  .biao-ti {
+    font-size: 13px;
+    color: var(--qian-hui);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .da-xiao {
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--lan);
+    letter-spacing: .5px;
+  }
+  .da-xiao small {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--qian-hui);
+    margin-left: 8px;
+    letter-spacing: 0;
+  }
+
+  .an-niu {
+    display: inline-block;
+    margin: 26px auto 0;
+    min-width: 260px;
+    padding: 16px 44px;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #fff;
+    background: var(--lan);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .15s, transform .1s;
+    font-family: inherit;
+  }
+  .an-niu:hover { background: var(--lan-shen); }
+  .an-niu:active { transform: translateY(1px); }
+  .an-niu:disabled { background: #b9c6d2; cursor: not-allowed; }
+
+  .an-niu-fu {
+    display: block;
+    margin: 12px auto 0;
+    background: none;
+    border: none;
+    color: var(--qian-hui);
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+    font-family: inherit;
+    padding: 4px;
+  }
+  .an-niu-fu:hover { color: var(--lan); }
+
+  /* ---- 进度 ---- */
+  .jin-du-wai {
+    display: none;
+    max-width: 440px;
+    margin: 24px auto 0;
+  }
+  .jin-du-wai.xian { display: block; }
+  .jin-du-chao {
+    height: 10px;
+    background: #e8e8e8;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .jin-du-tiao {
+    height: 100%;
+    width: 0%;
+    background: var(--lan);
+    border-radius: 5px;
+    transition: width .15s linear;
+  }
+  .zhuang-tai {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--hui);
+    text-align: left;
+  }
+  .zhuang-tai.cuo { color: #d64541; }
+  .zhuang-tai.hao { color: var(--lan); font-weight: 700; }
+
+  .ti-shi {
+    margin-top: 18px;
+    font-size: 12px;
+    color: #b0b0b0;
+    line-height: 1.8;
+  }
+
+  /* ---- 标题 ---- */
+  h2 {
+    font-size: 21px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    padding-left: 12px;
+    border-left: 4px solid var(--lan);
+    line-height: 1.3;
+  }
+  .h2-fu {
+    font-size: 13px;
+    color: var(--qian-hui);
+    margin: 0 0 22px 16px;
+  }
+
+  /* ---- 步骤 ---- */
+  .bu-zhou { margin-top: 8px; }
+  .bu {
+    display: flex;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px dashed #eef1f4;
+  }
+  .bu:last-child { border-bottom: none; }
+  .bu-hao {
+    flex: 0 0 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--lan-qian);
+    color: var(--lan);
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+  }
+  .bu-nei h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+  .bu-nei p {
+    font-size: 13.5px;
+    color: var(--hui);
+  }
+  code {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 12.5px;
+    background: #f1f4f7;
+    color: #c0392b;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  /* ---- 功能网格 ---- */
+  .gong-neng {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .gong-neng div {
+    background: #f8fafc;
+    border: 1px solid var(--bian);
+    border-radius: 8px;
+    padding: 16px 18px;
+  }
+  .gong-neng h4 {
+    font-size: 14.5px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: var(--zi);
+  }
+  .gong-neng h4::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--lan);
+    margin-right: 8px;
+    vertical-align: 2px;
+  }
+  .gong-neng p {
+    font-size: 13px;
+    color: var(--hui);
+    line-height: 1.65;
+  }
+
+  /* ---- 能做啥 ---- */
+  ul.neng-gan {
+    list-style: none;
+    margin-top: 8px;
+  }
+  ul.neng-gan li {
+    font-size: 14px;
+    color: #3d3d3d;
+    padding: 9px 0 9px 26px;
+    position: relative;
+    border-bottom: 1px solid #f2f5f8;
+  }
+  ul.neng-gan li:last-child { border-bottom: none; }
+  ul.neng-gan li::before {
+    content: "✓";
+    position: absolute;
+    left: 4px;
+    color: var(--lan);
+    font-weight: 700;
+  }
+
+  /* ---- 提示框 ---- */
+  .ti-shi-kuang {
+    background: #fff8e6;
+    border: 1px solid #ffe1a0;
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 13.5px;
+    color: #7a5c00;
+    line-height: 1.8;
+    margin-top: 8px;
+  }
+  .ti-shi-kuang b { color: #6b4f00; }
+
+  /* ---- 页脚 ---- */
+  footer {
+    text-align: center;
+    font-size: 12px;
+    color: #b8bfc7;
+    padding: 6px 0 40px;
+  }
+  footer a { color: #b8bfc7; }
+
+  @media (max-width: 560px) {
+    .ding { padding: 40px 18px 54px; }
+    .ding h1 { font-size: 30px; }
+    .ka { padding: 26px 20px; }
+    .an-niu { width: 100%; min-width: 0; }
+    .da-xiao { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== 顶部 ==================== -->
+<div class="ding">
+  <h1>Fan<span>OS</span></h1>
+  <div class="fu">模拟器下载器 · 一个能玩的 Windows 风格桌面</div>
+</div>
+
+<div class="zhu">
+
+  <!-- ==================== 下载卡 ==================== -->
+  <div class="ka ka-xia">
+    <div class="biao-ti">安 装 包 大 小</div>
+    <div class="da-xiao">11.2<small>MB</small></div>
+
+    <button class="an-niu" id="anniu">开 始 下 载</button>
+    <button class="an-niu-fu" id="zhilian">或者用浏览器自带的下载</button>
+
+    <div class="jin-du-wai" id="jinduwai">
+      <div class="jin-du-chao">
+        <div class="jin-du-tiao" id="jindutiao"></div>
+      </div>
+      <div class="zhuang-tai" id="zhuangtai">正在连接服务器…</div>
+    </div>
+
+    <div class="ti-shi">
+      下载的是一个 <code>FanOS.exe</code> 单文件程序<br>
+      不会自动安装，不会自动运行，双击才启动
+    </div>
+  </div>
+
+  <!-- ==================== 怎么用 ==================== -->
+  <div class="ka">
+    <h2>怎么使用</h2>
+    <div class="h2-fu">四步，不用装任何东西</div>
+
+    <div class="bu-zhou">
+      <div class="bu">
+        <div class="bu-hao">1</div>
+        <div class="bu-nei">
+          <h3>点「开始下载」</h3>
+          <p>上面的大按钮。点完之后进度条会跑起来，能看到下到多少了。</p>
+        </div>
+      </div>
+      <div class="bu">
+        <div class="bu-hao">2</div>
+        <div class="bu-nei">
+          <h3>等它下完</h3>
+          <p>文件大约 11 MB，网快的话几秒就好。文件夹里会多一个 <code>FanOS.exe</code>。</p>
+        </div>
+      </div>
+      <div class="bu">
+        <div class="bu-hao">3</div>
+        <div class="bu-nei">
+          <h3>双击打开</h3>
+          <p>双击 <code>FanOS.exe</code> 就进入 FanOS 桌面。不用安装，不用重启。</p>
+        </div>
+      </div>
+      <div class="bu">
+        <div class="bu-hao">4</div>
+        <div class="bu-nei">
+          <h3>开始折腾</h3>
+          <p>试试打开开始菜单、拖一拖窗口、双击图标。想退出就点桌面上的关机。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 有啥功能 ==================== -->
+  <div class="ka">
+    <h2>有哪些功能</h2>
+    <div class="h2-fu">一个 Windows 风格桌面该有的都有</div>
+
+    <div class="gong-neng">
+      <div>
+        <h4>桌面与壁纸</h4>
+        <p>纯色桌面、可换壁纸，图标能双击打开对应的程序。</p>
+      </div>
+      <div>
+        <h4>开始菜单</h4>
+        <p>带展开动画，列出全部应用，点击就能启动。</p>
+      </div>
+      <div>
+        <h4>任务栏与 Dock</h4>
+        <p>底部圆角 Dock，显示正在运行的程序，点击可以切换。</p>
+      </div>
+      <div>
+        <h4>窗口管理</h4>
+        <p>窗口能拖动、最小化、最大化、关闭，多层窗口自动置顶。</p>
+      </div>
+      <div>
+        <h4>文件资源管理器</h4>
+        <p>简易文件管理，能进文件夹、选中文件（黄色高亮）、删除文件。</p>
+      </div>
+      <div>
+        <h4>轻量应用</h4>
+        <p>自带记事本、画图板、计算器等小工具，开箱就能用。</p>
+      </div>
+      <div>
+        <h4>数据保存</h4>
+        <p>改过的桌面、存过的文件会留在本地，下次打开还在。</p>
+      </div>
+      <div>
+        <h4>单文件免安装</h4>
+        <p>整个系统就一个 exe，拷贝到 U 盘里，换台电脑插上就能跑。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 我能做什么 ==================== -->
+  <div class="ka">
+    <h2>我能用它干什么</h2>
+    <div class="h2-fu">别当正经系统用，当游乐场玩</div>
+
+    <ul class="neng-gan">
+      <li>在别人的电脑上打开一个「像 Windows 的桌面」，装作在用自己的电脑</li>
+      <li>塞进 U 盘带走，换台机器插上就能跑，不用安装</li>
+      <li>自己写的小程序丢进去，做成桌面图标，双击启动</li>
+      <li>改壁纸、改图标、改布局，搭一个完全是自己审美的工作桌面</li>
+      <li>当成教学演示：给别人看一个操作系统界面是怎么一层层搭起来的</li>
+      <li>在低配电脑或者不能装软件的地方，跑一个干净的桌面环境</li>
+    </ul>
+  </div>
+
+  <!-- ==================== 注意事项 ==================== -->
+  <div class="ka">
+    <h2>下载前看一眼</h2>
+    <div class="h2-fu">几句话，避免误会</div>
+
+    <div class="ti-shi-kuang">
+      <b>不是真正的操作系统。</b>
+      FanOS 是一个跑在 Windows 上的模拟器程序，不会改动你的系统、不会格式化硬盘、不会替换开机画面。<br><br>
+      <b>第一次运行可能被拦一下。</b>
+      没有数字签名的 exe，Windows 或杀毒软件可能弹「未知发布者」，选「更多信息 → 仍要运行」即可。<br><br>
+      <b>下载完不会自动运行。</b>
+      下完只是存到你的文件夹里，想玩再自己双击。
+    </div>
+  </div>
+
+  <footer>
+    FanOS 模拟器下载器 · 本页面只负责下载，不收集任何信息
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ========== 配置：改这里就能换地址 ==========
+  var XIA_ZAI_DI_ZHI = "https://xfghjn676.github.io/FanOS.exe";
+  var WEN_JIAN_MING = "FanOS.exe";
+  var KUAI_DA_XIAO  = 128 * 1024;   // 每次读 128KB
+
+  var anniu   = document.getElementById("anniu");
+  var zhilian = document.getElementById("zhilian");
+  var jw      = document.getElementById("jinduwai");
+  var jt      = document.getElementById("jindutiao");
+  var zt      = document.getElementById("zhuangtai");
+
+  var zhengZaiXia = false;
+
+  // ---------- 工具 ----------
+  function daXiao(n) {
+    if (n < 1024) return n + " B";
+    if (n < 1048576) return (n / 1024).toFixed(1) + " KB";
+    if (n < 1073741824) return (n / 1048576).toFixed(1) + " MB";
+    return (n / 1073741824).toFixed(2) + " GB";
+  }
+
+  function sheZhuangTai(wen, lei) {
+    zt.textContent = wen;
+    zt.className = "zhuang-tai" + (lei ? " " + lei : "");
+  }
+
+  function sheJinDu(bi) {
+    jt.style.width = (Math.max(0, Math.min(1, bi)) * 100).toFixed(1) + "%";
+  }
+
+  function chongZhi() {
+    zhengZaiXia = false;
+    anniu.disabled = false;
+    anniu.textContent = "开 始 下 载";
+  }
+
+  // ---------- 判断浏览器能不能「自己下」 ----------
+  // 需要三样：fetch 流式读取、WritableStream、showSaveFilePicker
+  // 缺一样就走浏览器默认下载（一样能下，只是看不到进度）
+  var keyiZiJiXia = (
+    typeof fetch === "function" &&
+    typeof WritableStream === "function" &&
+    typeof window.showSaveFilePicker === "function"
+  );
+
+  if (!keyiZiJiXia) {
+    zhilian.style.display = "none";   // 没有备用按钮就用主按钮
+  }
+
+  // ---------- 主按钮 ----------
+  anniu.addEventListener("click", function () {
+    if (zhengZaiXia) return;
+
+    if (!keyiZiJiXia) {
+      // 不支持流式保存的浏览器：直接让浏览器下载
+      window.location.href = XIA_ZAI_DI_ZHI;
+      sheZhuangTai("已交给浏览器下载，请查看下载列表", "hao");
+      return;
+    }
+    kaiShiZiJiXia();
+  });
+
+  // ---------- 备用按钮：走浏览器默认下载 ----------
+  zhilian.addEventListener("click", function () {
+    var a = document.createElement("a");
+    a.href = XIA_ZAI_DI_ZHI;
+    a.download = WEN_JIAN_MING;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    jw.classList.add("xian");
+    sheJinDu(0);
+    sheZhuangTai("已交给浏览器下载，进度请看浏览器右上角的下载列表", "hao");
+  });
+
+  // ---------- 自己下（带进度） ----------
+  async function kaiShiZiJiXia() {
+    var wenJianLiu = null;
+
+    // 1. 先弹保存对话框，让用户选存哪
+    try {
+      wenJianLiu = await window.showSaveFilePicker({
+        suggestedName: WEN_JIAN_MING,
+        types: [{
+          description: "可执行程序",
+          accept: { "application/octet-stream": [".exe"] }
+        }]
+      });
+    } catch (e) {
+      // 用户自己取消了
+      if (e && e.name === "AbortError") {
+        return;
+      }
+      // 不支持 / 被拦：退回浏览器下载
+      window.location.href = XIA_ZAI_DI_ZHI;
+      jw.classList.add("xian");
+      sheZhuangTai("已交给浏览器下载，进度请看浏览器的下载列表", "hao");
+      return;
+    }
+
+    zhengZaiXia = true;
+    anniu.disabled = true;
+    anniu.textContent = "下 载 中 …";
+    jw.classList.add("xian");
+    sheJinDu(0);
+    sheZhuangTai("正在连接服务器…");
+
+    try {
+      var resp = await fetch(XIA_ZAI_DI_ZHI, { mode: "cors" });
+
+      if (!resp.ok) {
+        throw new Error("服务器返回错误 " + resp.status +
+                        "（文件可能还没上传）");
+      }
+
+      // 防一手：地址被 404 页面接管时会返回 text/html
+      var leiXing = (resp.headers.get("Content-Type") || "").toLowerCase();
+      if (leiXing.indexOf("text/html") >= 0) {
+        throw new Error("这个地址返回的是网页不是文件，网址可能写错了");
+      }
+
+      var zong = parseInt(resp.headers.get("Content-Length") || "-1", 10);
+      if (isNaN(zong)) zong = -1;
+
+      if (!resp.body) {
+        throw new Error("这个浏览器不支持分块读取");
+      }
+
+      var du = resp.body.getReader();
+      var xie = await wenJianLiu.createWritable();
+      var yiXia = 0;
+      var shangCi = 0;
+
+      while (true) {
+        var jieGuo = await du.read();
+        if (jieGuo.done) break;
+
+        await xie.write(jieGuo.value);
+        yiXia += jieGuo.value.length;
+
+        var xianZai = Date.now();
+        if (xianZai - shangCi > 100) {
+          shangCi = xianZai;
+          if (zong > 0) {
+            var bi = yiXia / zong;
+            sheJinDu(bi);
+            sheZhuangTai("已下载 " + daXiao(yiXia) + " / " + daXiao(zong) +
+                         "  (" + Math.round(bi * 100) + "%)");
+          } else {
+            sheZhuangTai("已下载 " + daXiao(yiXia));
+          }
+        }
+      }
+
+      await xie.close();
+      sheJinDu(1);
+
+      if (zong > 0 && yiXia !== zong) {
+        throw new Error("文件不完整（应为 " + daXiao(zong) +
+                        "，实际 " + daXiao(yiXia) + "），请重下");
+      }
+
+      sheZhuangTai("下载完成：" + WEN_JIAN_MING + "（" + daXiao(yiXia) + "）", "hao");
+      anniu.textContent = "再 下 一 次";
+      anniu.disabled = false;
+      zhengZaiXia = false;
+
+    } catch (e) {
+      jw.classList.add("xian");
+      sheJinDu(0);
+      sheZhuangTai((e && e.message) ? e.message : ("下载出错：" + e), "cuo");
+      chongZhi();
+      anniu.textContent = "重 试";
+    }
+  }
+
+  // ---------- 页面打开时探一下文件在不在 ----------
+  // HEAD 请求不下载内容，只问一句「有没有这个文件」
+  if (typeof fetch === "function") {
+    fetch(XIA_ZAI_DI_ZHI, { method: "HEAD", mode: "cors" })
+      .then(function (r) {
+        if (!r.ok) {
+          sheZhuangTai("服务器上没有找到文件（" + r.status + "）", "cuo");
+        }
+      })
+      .catch(function () { /* 探测失败不打扰用户 */ });
+  }
+})();
+</script>
+
+</body>
+</html>
